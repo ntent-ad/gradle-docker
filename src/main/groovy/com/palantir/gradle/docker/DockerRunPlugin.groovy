@@ -110,17 +110,12 @@ class DockerRunPlugin implements Plugin<Project> {
                     args.add('-p')
                     args.add(port)
                 }
+                // NTENT : our own custom volume handling. just add them exactly as they're specified, no validation.
+                // docker-system on Windows relies on the mapping of folder to docker VM, so checking
+                // file locations can never work
                 for (Entry<String,String> volume : ext.volumes.entrySet()) {
-                    File localFile = new File(project.projectDir, volume.key)
-
-                    if (!localFile.exists()) {
-                       StyledTextOutput o = project.services.get(StyledTextOutputFactory.class).create(DockerRunPlugin)
-                       o.withStyle(Style.Error).println("ERROR: Local folder ${localFile} doesn't exist. Mounted volume will not be visible to container")
-                       throw new IllegalStateException("Local folder ${localFile} doesn't exist.")
-                    }
-
-                    args.add('-v')
-                    args.add("${localFile.absolutePath}:${volume.value}")
+                    args.add('--mount')
+                    args.add("type=bind,src=${volume.key},dst=${volume.value}")
                 }
                 args.addAll(ext.env.collect{ k, v -> ['-e', "${k}=${v}"] }.flatten())
                 args.addAll(['--name', ext.name, ext.image])
