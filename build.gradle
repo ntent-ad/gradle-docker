@@ -45,7 +45,18 @@ publishing {
             artifact(publishPluginJavaDocsJar)
         }
     }
+    repositories {
+        maven {
+            name = "Ntent"
+            credentials {
+                username mavenUser
+                password mavenPassword
+            }
+            url "http://nexus.cb.ntent.com/nexus/content/repositories/ntent-3rd-party-release/"
+        }
+    }
 }
+
 
 bintray {
     user = System.env.BINTRAY_USERNAME
