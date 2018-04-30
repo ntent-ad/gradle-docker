@@ -113,7 +113,7 @@ class DockerRunPlugin implements Plugin<Project> {
                 // NTENT : our own custom volume handling. just add them exactly as they're specified, no validation.
                 // docker-system on Windows relies on the mapping of folder to docker VM, so checking
                 // file locations can never work
-                for (Entry<String,String> volume : ext.volumes.entrySet()) {
+                for (Entry<Object,String> volume : ext.volumes.entrySet()) {
                     args.add('--mount')
                     args.add("type=bind,src=${volume.key},dst=${volume.value}")
                 }
